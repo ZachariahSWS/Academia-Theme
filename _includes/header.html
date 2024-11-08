@@ -1,0 +1,13 @@
+<header>
+  <nav>
+    <ul>
+      {% for item in site.theme_settings.navigation %}
+      <li>
+        <a href="{{ item.url | relative_url }}" class="internal-link">
+          {{ item.title }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</header>
