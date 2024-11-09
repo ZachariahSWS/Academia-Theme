@@ -68,7 +68,10 @@
     </div>
     <main>
       <div class="content-wrapper">
-        <div class="main-content">{{ content }}</div>
+        <div class="main-content">
+          <h1>{{ title }}</h1>
+          {{ content }}
+        </div>
       </div>
     </main>
     {% include footer.html %}
