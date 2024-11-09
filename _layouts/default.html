@@ -80,7 +80,7 @@
       <div class="footnote-content"></div>
       <button class="close-btn" aria-label="Close footnote">&times;</button>
     </div>
-    {% if page.sidebar %}
+    {% endif %} {% if page.sidebar %}
     <script defer src="{{ '/assets/js/sidebar.js' | relative_url }}"></script>
     {% endif %} {% if page.toc %}
     <script defer src="{{ '/assets/js/toc.js' | relative_url }}"></script>
