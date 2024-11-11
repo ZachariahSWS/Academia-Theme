@@ -55,7 +55,7 @@ async function createChart(container, data, options = {}) {
   const opts = {
     width: options.width || container.clientWidth || 800,
     height: options.height || 400,
-    margin: { top: 40, right: 60, bottom: 60, left: 60 },
+    margin: { top: 80, right: 60, bottom: 60, left: 60 },
     title: options.title || "",
     subtitle: options.subtitle || "",
     xLabel: options.xLabel || "",
@@ -136,7 +136,7 @@ async function createChart(container, data, options = {}) {
       .attr("x", width / 2)
       .attr("y", -opts.margin.top / 2)
       .attr("text-anchor", "middle")
-      .style("font-size", "1em")
+      .style("font-size", "1.5em")
       .style("fill", opts.titleColor || "var(--primary-color)")
       .text(opts.title);
     if (opts.subtitle) {
@@ -145,8 +145,8 @@ async function createChart(container, data, options = {}) {
         .attr("x", width / 2)
         .attr("y", -opts.margin.top / 4)
         .attr("text-anchor", "middle")
-        .style("font-size", "0.9em")
-        .style("fill", opts.titleColor || "var(--primary-color)")
+        .style("font-size", "1em")
+        .style("fill", opts.titleColor || "var(--secondary-color)")
         .text(opts.subtitle);
     }
   }
@@ -157,7 +157,7 @@ async function createChart(container, data, options = {}) {
       .attr("x", width / 2)
       .attr("y", height + opts.margin.bottom - 10)
       .attr("text-anchor", "middle")
-      .style("fill", "var(--primary-color)")
+      .style("fill", "var(--secondary-color)")
       .text(opts.xLabel);
   }
 
@@ -169,7 +169,7 @@ async function createChart(container, data, options = {}) {
       .attr("y", -opts.margin.left + 20)
       .attr("x", -height / 2)
       .attr("text-anchor", "middle")
-      .style("fill", "var(--primary-color)")
+      .style("fill", "var(--secondary-color)")
       .text(opts.yLabel);
   }
 }
