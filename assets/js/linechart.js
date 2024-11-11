@@ -133,7 +133,8 @@ async function createChart(container, data, options = {}) {
       .attr("x", width / 2)
       .attr("y", -opts.margin.top / 2)
       .attr("text-anchor", "middle")
-      .style("font-size", "16px")
+      .style("font-size", "1em")
+      .style("fill", opts.titleColor || "var(--primary-color)")
       .text(opts.title);
   }
 }
