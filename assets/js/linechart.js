@@ -18,34 +18,34 @@ const addStyles = (() => {
     if (added) return;
     const style = document.createElement("style");
     style.textContent = `
-            .auto-chart {
-                width: 100%;
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            .auto-chart-line {
-                fill: none;
-                stroke: var(--link-color);
-                stroke-width: 2;
-            }
-            .auto-chart-grid line {
-                stroke: var(--secondary-color);
-            }
-            .auto-chart-grid path {
-                stroke-width: 0;
-            }
-            .auto-chart-loading {
-                text-align: center;
-                padding: 20px;
-                color: var(--off-background-color);
-            }
-            .auto-chart-error {
-                text-align: center;
-                padding: 20px;
-                color: var(--off-background-color);
-            }
-        `;
+      .auto-chart {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .auto-chart-line {
+        fill: none;
+        stroke: var(--link-color);
+        stroke-width: 2;
+      }
+      .auto-chart-grid line {
+        stroke: var(--secondary-color);
+      }
+      .auto-chart-grid path {
+        stroke-width: 0;
+      }
+      .auto-chart-loading {
+        text-align: center;
+        padding: 20px;
+        color: var(--off-background-color);
+      }
+      .auto-chart-error {
+        text-align: center;
+        padding: 20px;
+        color: var(--off-background-color);
+      }
+    `;
     document.head.appendChild(style);
     added = true;
   };
@@ -57,6 +57,9 @@ async function createChart(container, data, options = {}) {
     height: options.height || 400,
     margin: { top: 40, right: 60, bottom: 60, left: 60 },
     title: options.title || "",
+    subtitle: options.subtitle || "",
+    xLabel: options.xLabel || "",
+    yLabel: options.yLabel || "",
     color: options.color || "var(--link-color)",
   };
 
@@ -136,6 +139,38 @@ async function createChart(container, data, options = {}) {
       .style("font-size", "1em")
       .style("fill", opts.titleColor || "var(--primary-color)")
       .text(opts.title);
+    if (opts.subtitle) {
+      svg
+        .append("text")
+        .attr("x", width / 2)
+        .attr("y", -opts.margin.top / 4)
+        .attr("text-anchor", "middle")
+        .style("font-size", "0.9em")
+        .style("fill", opts.titleColor || "var(--primary-color)")
+        .text(opts.subtitle);
+    }
+  }
+  // Add X axis label
+  if (opts.xLabel) {
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", height + opts.margin.bottom - 10)
+      .attr("text-anchor", "middle")
+      .style("fill", "var(--primary-color)")
+      .text(opts.xLabel);
+  }
+
+  // Add Y axis label
+  if (opts.yLabel) {
+    svg
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -opts.margin.left + 20)
+      .attr("x", -height / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "var(--primary-color)")
+      .text(opts.yLabel);
   }
 }
 
