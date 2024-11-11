@@ -60,6 +60,7 @@ async function createChart(container, data, options = {}) {
     subtitle: options.subtitle || "",
     xLabel: options.xLabel || "",
     yLabel: options.yLabel || "",
+    source: options.source || "",
     color: options.color || "var(--link-color)",
   };
 
@@ -137,7 +138,7 @@ async function createChart(container, data, options = {}) {
       .attr("y", -opts.margin.top / 2)
       .attr("text-anchor", "middle")
       .style("font-size", "1.5em")
-      .style("fill", opts.titleColor || "var(--primary-color)")
+      .style("fill", "var(--primary-color)")
       .text(opts.title);
     if (opts.subtitle) {
       svg
@@ -146,7 +147,7 @@ async function createChart(container, data, options = {}) {
         .attr("y", -opts.margin.top / 4)
         .attr("text-anchor", "middle")
         .style("font-size", "1em")
-        .style("fill", opts.titleColor || "var(--secondary-color)")
+        .style("fill", "var(--secondary-color)")
         .text(opts.subtitle);
     }
   }
@@ -171,6 +172,17 @@ async function createChart(container, data, options = {}) {
       .attr("text-anchor", "middle")
       .style("fill", "var(--secondary-color)")
       .text(opts.yLabel);
+  }
+
+  if (opts.source) {
+    svg
+      .append("text")
+      .attr("x", width)
+      .attr("y", height + opts.margin.bottom - 10)
+      .attr("text-anchor", "end")
+      .style("font-size", "0.8em")
+      .style("fill", "var(--secondary-color)")
+      .text(`Source: ${opts.source}`);
   }
 }
 
