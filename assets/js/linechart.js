@@ -1,222 +1,260 @@
-// Load required dependencies dynamically
-async function loadDependencies() {
-  if (typeof d3 === "undefined") {
-    await new Promise((resolve, reject) => {
+// Configuration object
+const CONFIG = {
+  DEPENDENCIES: {
+    D3: "https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js",
+  },
+  DEFAULT_CHART_OPTIONS: {
+    width: 800,
+    height: 400,
+    margin: { top: 80, right: 60, bottom: 60, left: 60 },
+    color: "var(--link-color)",
+  },
+  STYLES: `
+    .auto-chart {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .auto-chart-line {
+      fill: none;
+      stroke: var(--link-color);
+      stroke-width: 2;
+    }
+    .auto-chart-grid line {
+      stroke: var(--secondary-color);
+    }
+    .auto-chart-grid path {
+      stroke-width: 0;
+    }
+    .auto-chart-loading,
+    .auto-chart-error {
+      text-align: center;
+      padding: 20px;
+      color: var(--off-background-color);
+    }
+  `,
+};
+
+// Utility functions
+const utils = {
+  loadScript: async (src) => {
+    return new Promise((resolve, reject) => {
+      if (window.d3) return resolve();
+
       const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";
+      script.src = src;
+      script.async = true;
       script.onload = resolve;
       script.onerror = reject;
       document.head.appendChild(script);
     });
+  },
+
+  addStyles: (() => {
+    let initialized = false;
+    return () => {
+      if (initialized) return;
+      const style = document.createElement("style");
+      style.textContent = CONFIG.STYLES;
+      document.head.appendChild(style);
+      initialized = true;
+    };
+  })(),
+
+  parseChartOptions: (element) => {
+    try {
+      return {
+        ...CONFIG.DEFAULT_CHART_OPTIONS,
+        ...JSON.parse(element.getAttribute("data-options") || "{}"),
+        width: element.clientWidth || CONFIG.DEFAULT_CHART_OPTIONS.width,
+      };
+    } catch (error) {
+      console.error("Error parsing chart options:", error);
+      return CONFIG.DEFAULT_CHART_OPTIONS;
+    }
+  },
+};
+
+// Chart creation class
+class LineChart {
+  constructor(container, data, options) {
+    this.container = container;
+    this.data = this.parseData(data);
+    this.options = options;
+    this.init();
   }
-}
 
-// Add styles once
-const addStyles = (() => {
-  let added = false;
-  return () => {
-    if (added) return;
-    const style = document.createElement("style");
-    style.textContent = `
-      .auto-chart {
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      .auto-chart-line {
-        fill: none;
-        stroke: var(--link-color);
-        stroke-width: 2;
-      }
-      .auto-chart-grid line {
-        stroke: var(--secondary-color);
-      }
-      .auto-chart-grid path {
-        stroke-width: 0;
-      }
-      .auto-chart-loading {
-        text-align: center;
-        padding: 20px;
-        color: var(--off-background-color);
-      }
-      .auto-chart-error {
-        text-align: center;
-        padding: 20px;
-        color: var(--off-background-color);
-      }
-    `;
-    document.head.appendChild(style);
-    added = true;
-  };
-})();
+  parseData(data) {
+    const parseDate = d3.timeParse("%Y-%m-%d");
+    return data
+      .filter((d) => d.date && d.value)
+      .map((d) => ({
+        date: parseDate(d.date),
+        value: +d.value,
+      }))
+      .sort((a, b) => a.date - b.date);
+  }
 
-async function createChart(container, data, options = {}) {
-  const opts = {
-    width: options.width || container.clientWidth || 800,
-    height: options.height || 400,
-    margin: { top: 80, right: 60, bottom: 60, left: 60 },
-    title: options.title || "",
-    subtitle: options.subtitle || "",
-    xLabel: options.xLabel || "",
-    yLabel: options.yLabel || "",
-    source: options.source || "",
-    color: options.color || "var(--link-color)",
-  };
+  createScales() {
+    const { width, height, margin } = this.options;
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
 
-  const width = opts.width - opts.margin.left - opts.margin.right;
-  const height = opts.height - opts.margin.top - opts.margin.bottom;
+    this.x = d3
+      .scaleTime()
+      .domain(d3.extent(this.data, (d) => d.date))
+      .range([0, chartWidth]);
 
-  // Clear container
-  container.innerHTML = "";
+    this.y = d3
+      .scaleLinear()
+      .domain([0, d3.max(this.data, (d) => d.value) * 1.1])
+      .range([chartHeight, 0]);
 
-  // Create SVG
-  const svg = d3
-    .select(container)
-    .append("svg")
-    .attr("width", opts.width)
-    .attr("height", opts.height)
-    .append("g")
-    .attr("transform", `translate(${opts.margin.left},${opts.margin.top})`);
+    return { chartWidth, chartHeight };
+  }
 
-  // Parse dates and values
-  const parseDate = d3.timeParse("%Y-%m-%d");
-  const parsedData = data
-    .filter((d) => d.date && d.value) // Remove invalid entries
-    .map((d) => ({
-      date: parseDate(d.date),
-      value: +d.value,
-    }))
-    .sort((a, b) => a.date - b.date);
+  init() {
+    const { width, height, margin } = this.options;
+    const { chartWidth, chartHeight } = this.createScales();
 
-  // Create scales
-  const x = d3
-    .scaleTime()
-    .domain(d3.extent(parsedData, (d) => d.date))
-    .range([0, width]);
+    this.container.innerHTML = "";
+    const svg = d3
+      .select(this.container)
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  const y = d3
-    .scaleLinear()
-    .domain([0, d3.max(parsedData, (d) => d.value) * 1.1])
-    .range([height, 0]);
+    this.drawGrid(svg, chartWidth, chartHeight);
+    this.drawAxes(svg, chartHeight);
+    this.drawLine(svg);
+    this.addLabels(svg, chartWidth, chartHeight);
+  }
 
-  // Add grid
-  svg
-    .append("g")
-    .attr("class", "auto-chart-grid")
-    .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
-
-  // Add axes
-  svg
-    .append("g")
-    .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-    .style("text-anchor", "end")
-    .attr("transform", "rotate(-45)");
-
-  svg.append("g").call(d3.axisLeft(y));
-
-  // Add line
-  const line = d3
-    .line()
-    .x((d) => x(d.date))
-    .y((d) => y(d.value));
-
-  svg
-    .append("path")
-    .datum(parsedData)
-    .attr("class", "auto-chart-line")
-    .style("stroke", opts.color)
-    .attr("d", line);
-
-  // Add title if provided
-  if (opts.title) {
+  drawGrid(svg, width, height) {
     svg
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", -opts.margin.top / 2)
-      .attr("text-anchor", "middle")
-      .style("font-size", "1.5em")
-      .style("fill", "var(--primary-color)")
-      .text(opts.title);
-    if (opts.subtitle) {
+      .append("g")
+      .attr("class", "auto-chart-grid")
+      .call(d3.axisLeft(this.y).tickSize(-width).tickFormat(""));
+  }
+
+  drawAxes(svg, height) {
+    svg
+      .append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(this.x))
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("transform", "rotate(-45)");
+
+    svg.append("g").call(d3.axisLeft(this.y));
+  }
+
+  drawLine(svg) {
+    const line = d3
+      .line()
+      .x((d) => this.x(d.date))
+      .y((d) => this.y(d.value));
+
+    svg
+      .append("path")
+      .datum(this.data)
+      .attr("class", "auto-chart-line")
+      .style("stroke", this.options.color)
+      .attr("d", line);
+  }
+
+  addLabels(svg, width, height) {
+    const { title, subtitle, xLabel, yLabel, source, margin } = this.options;
+
+    if (title) {
       svg
         .append("text")
         .attr("x", width / 2)
-        .attr("y", -opts.margin.top / 4)
+        .attr("y", -margin.top / 2)
         .attr("text-anchor", "middle")
-        .style("font-size", "1em")
-        .style("fill", "var(--secondary-color)")
-        .text(opts.subtitle);
+        .style("font-size", "1.5em")
+        .style("fill", "var(--primary-color)")
+        .text(title);
+
+      if (subtitle) {
+        svg
+          .append("text")
+          .attr("x", width / 2)
+          .attr("y", -margin.top / 4)
+          .attr("text-anchor", "middle")
+          .style("font-size", "1em")
+          .style("fill", "var(--secondary-color)")
+          .text(subtitle);
+      }
     }
-  }
-  // Add X axis label
-  if (opts.xLabel) {
-    svg
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", height + opts.margin.bottom - 10)
-      .attr("text-anchor", "middle")
-      .style("fill", "var(--secondary-color)")
-      .text(opts.xLabel);
-  }
 
-  // Add Y axis label
-  if (opts.yLabel) {
-    svg
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -opts.margin.left + 20)
-      .attr("x", -height / 2)
-      .attr("text-anchor", "middle")
-      .style("fill", "var(--secondary-color)")
-      .text(opts.yLabel);
-  }
+    if (xLabel) {
+      svg
+        .append("text")
+        .attr("x", width / 2)
+        .attr("y", height + margin.bottom - 10)
+        .attr("text-anchor", "middle")
+        .style("fill", "var(--secondary-color)")
+        .text(xLabel);
+    }
 
-  if (opts.source) {
-    svg
-      .append("text")
-      .attr("x", width)
-      .attr("y", height + opts.margin.bottom - 10)
-      .attr("text-anchor", "end")
-      .style("font-size", "0.8em")
-      .style("fill", "var(--secondary-color)")
-      .text(`Source: ${opts.source}`);
+    if (yLabel) {
+      svg
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -margin.left + 20)
+        .attr("x", -height / 2)
+        .attr("text-anchor", "middle")
+        .style("fill", "var(--secondary-color)")
+        .text(yLabel);
+    }
+
+    if (source) {
+      svg
+        .append("text")
+        .attr("x", width)
+        .attr("y", height + margin.bottom - 10)
+        .attr("text-anchor", "end")
+        .style("font-size", "0.8em")
+        .style("fill", "var(--secondary-color)")
+        .text(`Source: ${source}`);
+    }
   }
 }
 
 // Main initialization function
 async function initAutoCharts() {
   try {
-    await loadDependencies();
-    addStyles();
+    await utils.loadScript(CONFIG.DEPENDENCIES.D3);
+    utils.addStyles();
 
-    document.querySelectorAll("[data-chart-csv]").forEach(async (element) => {
-      try {
-        // Show loading state
-        element.classList.add("auto-chart");
-        element.textContent = "Loading chart...";
+    const chartElements = document.querySelectorAll("[data-chart-csv]");
 
-        const csvPath = element.getAttribute("data-chart-csv");
-        const options = JSON.parse(
-          element.getAttribute("data-options") || "{}",
-        );
+    await Promise.all(
+      [...chartElements].map(async (element) => {
+        try {
+          element.classList.add("auto-chart");
+          element.textContent = "Loading chart...";
 
-        // Fetch and parse CSV
-        const response = await fetch(csvPath);
-        const csvText = await response.text();
-        const data = d3.csvParse(csvText);
+          const response = await fetch(element.getAttribute("data-chart-csv"));
+          if (!response.ok) throw new Error("Failed to fetch CSV");
 
-        // Create chart
-        await createChart(element, data, options);
-      } catch (error) {
-        console.error("Error creating chart:", error);
-        element.classList.add("auto-chart-error");
-        element.textContent =
-          "Error loading chart. Please check console for details.";
-      }
-    });
+          const csvText = await response.text();
+          const data = d3.csvParse(csvText);
+          const options = utils.parseChartOptions(element);
+
+          new LineChart(element, data, options);
+        } catch (error) {
+          console.error("Error creating chart:", error);
+          element.classList.add("auto-chart-error");
+          element.textContent =
+            "Error loading chart. Please check console for details.";
+        }
+      }),
+    );
   } catch (error) {
     console.error("Error initializing charts:", error);
   }
