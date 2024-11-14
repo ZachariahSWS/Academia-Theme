@@ -238,6 +238,11 @@ nav ul li a:hover {
     vector-effect: non-scaling-stroke;
 }
 
+.auto-chart svg {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Horizontal Rule */
 hr {
     border: none;
