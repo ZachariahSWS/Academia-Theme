@@ -46,6 +46,7 @@
       href="{{'/assets/css/styles.css' | relative_url }}"
     />
     <link rel="favicon" type="image/x-icon" href="/favicon.ico" />
+    {% if page.math == true %}
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         tex2jax: {
@@ -59,6 +60,7 @@
       async
       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"
     ></script>
+    {% endif %}
     <script src="{{ '/assets/js/scroll-progress.js' | relative_url }}"></script>
   </head>
   <body>
