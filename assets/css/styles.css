@@ -247,9 +247,9 @@ nav ul li a:hover {
 
 hr {
     border: none;
-    border-top: 0.25em solid #000;
-    border-bottom: 0.25em solid #000;
-    height: 1em;
+    border-top: 0.125em solid var(--border-color);
+    border-bottom: 0.125em solid var(--border-color);
+    height: 0.25em;
     padding: 0;
 }
 
