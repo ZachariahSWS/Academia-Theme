@@ -244,32 +244,13 @@ nav ul li a:hover {
 }
 
 /* Horizontal Rule */
+
 hr {
     border: none;
-    position: relative;
-    overflow: visible;
-    background-image: url("images/integer.svg");
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 2rem;
-}
-
-hr::before,
-hr::after {
-    content: "";
-    position: absolute;
-    height: 0.1em;
-    width: calc(50% - 1.5rem); /* Adjust this value as needed */
-    background: var(--secondary-color);
-    top: 50%;
-}
-
-hr::before {
-    left: 0;
-}
-
-hr::after {
-    right: 0;
+    border-top: 0.25em solid #000;
+    border-bottom: 0.25em solid #000;
+    height: 1em;
+    padding: 0;
 }
 
 section {
