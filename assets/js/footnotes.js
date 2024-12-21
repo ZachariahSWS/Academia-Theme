@@ -3,59 +3,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const popupContent = popup.querySelector(".footnote-content");
   const closeBtn = popup.querySelector(".close-btn");
   const mainContent = document.querySelector(".main-content");
-  const isMobile = () => window.innerWidth <= 768;
 
   const showPopup = (footnote) => {
     popupContent.innerHTML = footnote.getAttribute("data-footnote");
     popup.style.display = "block";
 
-    if (isMobile()) {
-      Object.assign(popup.style, {
-        position: "absolute",
-        left: "50%",
-        top: `${window.scrollY + window.innerHeight / 2}px`,
-        transform: "translate(-50%, -50%)",
-        width: "calc(100% - 2rem)",
-        maxWidth: "90%",
-        maxHeight: "80vh",
-        overflowY: "auto",
-      });
-    } else {
-      const footnoteRect = footnote.getBoundingClientRect();
-      const mainContentRect = mainContent.getBoundingClientRect();
-      const MARGIN = 20;
-      const POPUP_WIDTH = 400;
+    const mainContentRect = mainContent.getBoundingClientRect();
+    const MARGIN = 20;
 
-      // Calculate position relative to main content
-      let leftPos = footnoteRect.right - mainContentRect.left + MARGIN;
-      if (leftPos + POPUP_WIDTH > mainContentRect.width - MARGIN) {
-        leftPos =
-          footnoteRect.left - mainContentRect.left - POPUP_WIDTH - MARGIN;
-      }
-      if (leftPos < MARGIN) {
-        leftPos = MARGIN;
-      }
-
-      let topPos = footnoteRect.top - mainContentRect.top;
-      const maxHeight = Math.min(window.innerHeight * 0.8, 400);
-      if (topPos + maxHeight > mainContentRect.height - MARGIN) {
-        topPos = mainContentRect.height - maxHeight - MARGIN;
-      }
-      if (topPos < MARGIN) {
-        topPos = MARGIN;
-      }
-
-      Object.assign(popup.style, {
-        position: "absolute",
-        left: `${leftPos}px`,
-        top: `${topPos}px`,
-        transform: "none",
-        width: `${POPUP_WIDTH}px`,
-        maxWidth: "30vw",
-        maxHeight: `${maxHeight}px`,
-        overflowY: "auto",
-      });
-    }
+    // Always position the popup in the center of main-content
+    Object.assign(popup.style, {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "90%", // Always 90% of main-content
+      maxHeight: "80vh",
+      overflowY: "auto",
+    });
   };
 
   document.addEventListener("click", (e) => {
