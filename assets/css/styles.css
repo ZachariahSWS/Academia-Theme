@@ -307,8 +307,9 @@ footer {
     z-index: 1000;
     box-sizing: border-box;
     border-radius: 0.25em;
-    max-height: 80vh; /* Add max height */
-    overflow-y: auto; /* Enable scrolling */
+    max-height: 80vh;
+    overflow-y: auto;
+    position: absolute; /* Changed from fixed */
 }
 
 .close-btn {

@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("footnote-popup");
   const popupContent = popup.querySelector(".footnote-content");
   const closeBtn = popup.querySelector(".close-btn");
+  const mainContent = document.querySelector(".main-content");
   const isMobile = () => window.innerWidth <= 768;
 
   const showPopup = (footnote) => {
@@ -10,53 +11,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isMobile()) {
       Object.assign(popup.style, {
-        position: "fixed",
+        position: "absolute",
         left: "50%",
-        top: "50%",
+        top: `${window.scrollY + window.innerHeight / 2}px`,
         transform: "translate(-50%, -50%)",
         width: "calc(100% - 2rem)",
         maxWidth: "90%",
-        maxHeight: "80vh", // Add max height
-        overflowY: "auto", // Enable scrolling
+        maxHeight: "80vh",
+        overflowY: "auto",
       });
     } else {
-      const rect = footnote.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const MARGIN = 20; // Margin from viewport edges
+      const footnoteRect = footnote.getBoundingClientRect();
+      const mainContentRect = mainContent.getBoundingClientRect();
+      const MARGIN = 20;
       const POPUP_WIDTH = 400;
 
-      // Calculate horizontal position
-      let leftPos = rect.right + MARGIN;
-      // If popup would go off right edge, position to the left of the footnote
-      if (leftPos + POPUP_WIDTH > viewportWidth - MARGIN) {
-        leftPos = rect.left - POPUP_WIDTH - MARGIN;
+      // Calculate position relative to main content
+      let leftPos = footnoteRect.right - mainContentRect.left + MARGIN;
+      if (leftPos + POPUP_WIDTH > mainContentRect.width - MARGIN) {
+        leftPos =
+          footnoteRect.left - mainContentRect.left - POPUP_WIDTH - MARGIN;
       }
-      // If still off-screen (rare case), align with left viewport edge
       if (leftPos < MARGIN) {
         leftPos = MARGIN;
       }
 
-      // Calculate vertical position
-      let topPos = rect.top;
-      // If popup would go off bottom, align to bottom of viewport
-      if (topPos + popup.offsetHeight > viewportHeight - MARGIN) {
-        topPos = viewportHeight - popup.offsetHeight - MARGIN;
+      let topPos = footnoteRect.top - mainContentRect.top;
+      const maxHeight = Math.min(window.innerHeight * 0.8, 400);
+      if (topPos + maxHeight > mainContentRect.height - MARGIN) {
+        topPos = mainContentRect.height - maxHeight - MARGIN;
       }
-      // If top would go above viewport, align to top of viewport
       if (topPos < MARGIN) {
         topPos = MARGIN;
       }
 
       Object.assign(popup.style, {
-        position: "fixed",
+        position: "absolute",
         left: `${leftPos}px`,
         top: `${topPos}px`,
         transform: "none",
         width: `${POPUP_WIDTH}px`,
         maxWidth: "30vw",
-        maxHeight: "80vh", // Add max height
-        overflowY: "auto", // Enable scrolling
+        maxHeight: `${maxHeight}px`,
+        overflowY: "auto",
       });
     }
   };
