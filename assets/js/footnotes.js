@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("footnote-popup");
   const popupContent = popup.querySelector(".footnote-content");
   const closeBtn = popup.querySelector(".close-btn");
-  const isMobile = () => window.innerWidth <= 768; // 48rem
+  const isMobile = () => window.innerWidth <= 768;
 
   const showPopup = (footnote) => {
     popupContent.innerHTML = footnote.getAttribute("data-footnote");
@@ -16,16 +16,47 @@ document.addEventListener("DOMContentLoaded", () => {
         transform: "translate(-50%, -50%)",
         width: "calc(100% - 2rem)",
         maxWidth: "90%",
+        maxHeight: "80vh", // Add max height
+        overflowY: "auto", // Enable scrolling
       });
     } else {
       const rect = footnote.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const MARGIN = 20; // Margin from viewport edges
+      const POPUP_WIDTH = 400;
+
+      // Calculate horizontal position
+      let leftPos = rect.right + MARGIN;
+      // If popup would go off right edge, position to the left of the footnote
+      if (leftPos + POPUP_WIDTH > viewportWidth - MARGIN) {
+        leftPos = rect.left - POPUP_WIDTH - MARGIN;
+      }
+      // If still off-screen (rare case), align with left viewport edge
+      if (leftPos < MARGIN) {
+        leftPos = MARGIN;
+      }
+
+      // Calculate vertical position
+      let topPos = rect.top;
+      // If popup would go off bottom, align to bottom of viewport
+      if (topPos + popup.offsetHeight > viewportHeight - MARGIN) {
+        topPos = viewportHeight - popup.offsetHeight - MARGIN;
+      }
+      // If top would go above viewport, align to top of viewport
+      if (topPos < MARGIN) {
+        topPos = MARGIN;
+      }
+
       Object.assign(popup.style, {
         position: "fixed",
-        left: `${rect.right + 20}px`,
-        top: `${rect.top}px`,
+        left: `${leftPos}px`,
+        top: `${topPos}px`,
         transform: "none",
-        width: "400px",
+        width: `${POPUP_WIDTH}px`,
         maxWidth: "30vw",
+        maxHeight: "80vh", // Add max height
+        overflowY: "auto", // Enable scrolling
       });
     }
   };
@@ -41,4 +72,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   closeBtn.addEventListener("click", () => (popup.style.display = "none"));
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    if (popup.style.display === "block") {
+      const activeFootnote = document.querySelector(".footnote:hover");
+      if (activeFootnote) {
+        showPopup(activeFootnote);
+      }
+    }
+  });
 });

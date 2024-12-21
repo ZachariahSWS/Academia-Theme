@@ -305,9 +305,10 @@ footer {
     padding: 0.625rem;
     box-shadow: 0 0.15em 0.2em rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    overflow-y: auto;
     box-sizing: border-box;
     border-radius: 0.25em;
+    max-height: 80vh; /* Add max height */
+    overflow-y: auto; /* Enable scrolling */
 }
 
 .close-btn {
