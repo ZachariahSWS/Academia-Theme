@@ -62,6 +62,7 @@ body {
 .main-content {
     flex: 0 1 45rem;
     max-width: 800px;
+    position: relative;
 }
 
 /* Typography */
@@ -306,6 +307,7 @@ footer {
     z-index: 1000;
     overflow-y: auto;
     box-sizing: border-box;
+    border-radius: 0.25em;
 }
 
 .close-btn {
