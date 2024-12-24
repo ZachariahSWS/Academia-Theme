@@ -4,48 +4,48 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeBtn = popup.querySelector(".close-btn");
   const mainContent = document.querySelector(".main-content");
 
+  // Ensure all necessary elements exist
+  if (!popup || !popupContent || !closeBtn || !mainContent) return;
+
   const showPopup = (footnote) => {
-    // First, make sure we have the content
+    // Set the content of the popup
     popupContent.innerHTML = footnote.getAttribute("data-footnote");
 
-    // Make sure the popup is initially visible
-    popup.style.display = "block";
+    // Make the popup visible by adding the 'visible' class
+    popup.classList.add("visible");
+    popup.classList.remove("hidden");
+  };
 
-    // Position relative to the main content
-    const mainContentRect = mainContent.getBoundingClientRect();
-
-    Object.assign(popup.style, {
-      position: "fixed", // Changed to fixed positioning
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "90%",
-      maxWidth: `${mainContentRect.width * 0.9}px`, // 90% of main content width
-      maxHeight: "80vh",
-      overflowY: "auto",
-      zIndex: "1000", // Ensure it appears above other content
-    });
+  const hidePopup = () => {
+    // Hide the popup by removing the 'visible' class
+    popup.classList.remove("visible");
+    popup.classList.add("hidden");
   };
 
   // Event listener for clicking footnotes
   document.addEventListener("click", (e) => {
     const clickedFootnote = e.target.closest(".footnote");
+
     if (clickedFootnote) {
       e.preventDefault();
       showPopup(clickedFootnote);
-    } else if (!popup.contains(e.target)) {
-      popup.style.display = "none";
+      return; // Exit to prevent hiding the popup immediately
+    }
+
+    // Hide the popup if the click is outside the popup
+    if (!popup.contains(e.target)) {
+      hidePopup();
     }
   });
 
   // Close button functionality
   closeBtn.addEventListener("click", () => {
-    popup.style.display = "none";
+    hidePopup();
   });
 
-  // Handle window resize
+  // Handle window resize to adjust popup if necessary
   window.addEventListener("resize", () => {
-    if (popup.style.display === "block") {
+    if (popup.classList.contains("visible")) {
       const activeFootnote = document.querySelector(".footnote:hover");
       if (activeFootnote) {
         showPopup(activeFootnote);

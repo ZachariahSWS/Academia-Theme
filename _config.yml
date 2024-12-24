@@ -16,13 +16,13 @@ defaults:
       layout: default
 
 theme_settings:
-  footer_content: "Made by Zachariah Schwab"
   navigation:
     - title: Home
       url: /
 
 title: Site Title
 description: Site description
+footer_content: "Made by Zachariah Schwab"
 
 # Exclude development-specific files
 exclude:

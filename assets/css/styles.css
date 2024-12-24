@@ -266,7 +266,7 @@ footer {
     border-top: 0.12em solid var(--border-color);
 }
 
-/* Hoverable footnotes */
+/* Hoverable Footnotes */
 .footnote {
     cursor: pointer;
     position: relative;
@@ -275,31 +275,19 @@ footer {
     transition: background-color 0.2s ease;
 }
 
-.footnote::before {
+.footnote::after {
     content: "†";
-    font-size: 1em;
+    font-size: 0.8em;
     vertical-align: super;
-    margin-left: 0.1em;
+    margin-left: 0.2em;
+    color: var(--link-color);
 }
 
 .footnote:hover {
     background-color: var(--off-background-color);
 }
 
-.footnote:hover::after {
-    content: "";
-    position: absolute;
-    left: -0.2em;
-    right: -0.2em;
-    top: -0.1em;
-    bottom: -0.1em;
-    background-color: var(--off-background-color);
-    border-radius: 0.25em;
-    z-index: -1;
-}
-
 .footnote-popup {
-    display: none;
     background-color: var(--off-background-color);
     border: 0.08em solid var(--border-color);
     padding: 0.625rem;
@@ -309,16 +297,39 @@ footer {
     border-radius: 0.25em;
     max-height: 80vh;
     overflow-y: auto;
-    position: absolute; /* Changed from fixed */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.footnote-popup.visible {
+    opacity: 1;
+    visibility: visible;
 }
 
 .close-btn {
     float: right;
     background: none;
     border: none;
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     cursor: pointer;
     color: var(--primary-color);
+}
+
+/* Visibility Control */
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
 }
 
 /* Scroll progress bar */
