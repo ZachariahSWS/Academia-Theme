@@ -1,0 +1,108 @@
+/* Critical CSS - Add this inline in your <head> */
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+:root {
+    --primary-color: #333;
+    --secondary-color: #888;
+    --background-color: #fff;
+    --border-color: #ccc;
+    --spacing-medium: 1.25rem;
+    --spacing-large: 2rem;
+    --line-height: 1.6;
+    --font-size-base: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #e0e0e0;
+        --secondary-color: #b0b0b0;
+        --background-color: #222222;
+        --border-color: #444;
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background-color);
+    font-family: "Atkinson Hyperlegible", sans-serif;
+    line-height: var(--line-height);
+    color: var(--primary-color);
+    font-size: var(--font-size-base);
+    overflow-x: hidden;
+}
+
+/* Critical Layout Components */
+.content-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--spacing-medium) 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+}
+
+.main-content {
+    flex: 0 1 45rem;
+    max-width: 800px;
+    position: relative;
+}
+
+/* Critical Header Styles */
+header {
+    background-color: var(--background-color);
+    padding: var(--spacing-medium);
+    margin-bottom: var(--spacing-large);
+    border-bottom: 0.12em solid var(--border-color);
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+nav ul li a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Critical Typography */
+h1 {
+    font-size: 2em;
+    margin-top: var(--spacing-large);
+    margin-bottom: var(--spacing-medium);
+}
+
+/* Critical Responsive Design */
+@media screen and (max-width: 1444px) {
+    .content-wrapper {
+        display: block;
+        padding: 0;
+    }
+
+    .main-content {
+        margin-left: 22rem;
+        width: calc(100% - 22rem);
+        padding: var(--spacing-medium);
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 50rem) {
+    .main-content {
+        width: 100%;
+        margin-left: 0rem;
+    }
+}
