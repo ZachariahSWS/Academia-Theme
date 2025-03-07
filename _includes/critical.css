@@ -4,10 +4,17 @@
 :root {
     --primary-color: #333;
     --secondary-color: #888;
+    --link-color: #ac3931;
+    --external-link-color: #99ccff;
     --background-color: #fff;
+    --off-background-color: #f0f0f0;
     --border-color: #ccc;
+    --scroll-progress-color: #99ccff;
+
+    --spacing-small: 0.625rem;
     --spacing-medium: 1.25rem;
     --spacing-large: 2rem;
+
     --line-height: 1.6;
     --font-size-base: 1rem;
 }
@@ -17,7 +24,11 @@
         --primary-color: #e0e0e0;
         --secondary-color: #b0b0b0;
         --background-color: #222222;
+        --off-background-color: #2f2f2f;
         --border-color: #444;
+        --link-color: #ac3931;
+        --external-link-color: #3388bb;
+        --scroll-progress-color: #3388bb;
     }
 }
 
@@ -100,7 +111,7 @@ h1 {
     }
 }
 
-@media (max-width: 50rem) {
+@media (max-width: 49.999rem) {
     .main-content {
         width: 100%;
         margin-left: 0rem;

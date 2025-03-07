@@ -175,9 +175,8 @@ footer {
 .footnote {
     cursor: pointer;
     position: relative;
-    display: block;
+    display: inline;
     background-color: transparent;
-    transition: background-color 0.2s ease;
 }
 
 .footnote::after {
@@ -189,29 +188,42 @@ footer {
 }
 
 .footnote:hover {
-    background-color: var(--off-background-color);
+    background-color: var(--border-color);
 }
 
 .footnote-popup {
     background-color: var(--off-background-color);
     border: 0.08em solid var(--border-color);
-    padding: 0.625rem;
+    padding: 0.625rem 1rem;
     box-shadow: 0 0.15em 0.2em rgba(0, 0, 0, 0.2);
     z-index: 1000;
     box-sizing: border-box;
     border-radius: 0.25em;
-    max-height: 80vh;
+    border-left: 0.2em solid var(--link-color);
     overflow-y: auto;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
+    position: absolute;
     transition:
         opacity 0.3s ease,
         visibility 0.3s ease;
     opacity: 0;
     visibility: hidden;
+    margin-top: 5px;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* Position footnote popup to the right ONLY on very large screens */
+@media screen and (min-width: 90.24rem) {
+    .footnote-popup {
+        width: 20rem !important; /* Override inline styles */
+        position: absolute !important; /* Allow popup to move with scroll */
+        margin: 0;
+        left: calc(
+            100% + 1rem
+        ) !important; /* Position to the right of main content */
+        right: auto !important; /* Ensure it doesn't use right positioning */
+        /* top will be set via JavaScript to align with the clicked footnote */
+    }
 }
 
 .footnote-popup.visible {
@@ -220,7 +232,9 @@ footer {
 }
 
 .close-btn {
-    float: right;
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
     background: none;
     border: none;
     font-size: 1.25rem;
@@ -279,8 +293,17 @@ footer {
     }
 }
 
-@media (max-width: 50rem) {
+@media (max-width: 90.25rem) {
     .toc-wrapper {
         display: none;
+    }
+
+    /* Ensure footnote popup behavior on medium and small screens */
+    .footnote-popup {
+        position: absolute !important;
+        width: auto !important; /* Will be set by JS */
+        left: auto !important;
+        right: auto !important;
+        margin-top: 5px;
     }
 }
