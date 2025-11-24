@@ -446,6 +446,11 @@ label.margin-toggle:not(.sidenote-number) {
         padding-right: 0;
     }
 
+    article-header,
+    article-inner {
+        width: 100%;
+    }
+
     .full-bleed {
         width: calc(100vw - 56px);
     }
