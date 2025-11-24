@@ -1,44 +1,281 @@
-/* Typography */
-
-h2 {
-    font-size: 1.5em;
-    margin-top: var(--spacing-medium);
-    margin-bottom: var(--spacing-medium);
+@font-face {
+    font-family: "Libertinus";
+    src: url(../fonts/LibertinusSerif-Regular.woff2) format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Libertinus";
+    src: url(../fonts/LibertinusSerif-Italic.woff2) format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Libertinus";
+    src: url(../fonts/LibertinusSerif-Bold.woff2) format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }
 
-p {
-    margin-bottom: var(--spacing-medium);
+@font-face {
+    font-family: "Atkinson Hyperlegible Mono";
+    src: url(../fonts/AtkinsonHyperLegible-Mono.woff2) format("woff2");
+    font-display: swap;
 }
 
-/* Lists */
+:root {
+    --thread-left-space: 35px;
+    --thread-right-space: 20px;
+    --outline-text-space: 200px;
+    --outline-width: calc(
+        var(--thread-left-space) + var(--thread-right-space) +
+            var(--outline-text-space)
+    );
+
+    --left-content-padding: 36px;
+    --right-content-padding: 36px;
+    --content-width: 120ch;
+    --header-height: 3.25rem;
+
+    --primary-color: #111;
+    --secondary-color: #333;
+    --background-color: #fff;
+    --background-color-muted: #eee;
+
+    --link-color: #ac3931;
+    --external-link-color: #99ccff;
+
+    --body-font: "Libertinus", Georgia, "Times New Roman", serif;
+    --header-font: "Libertinus", Georgia, "Times New Roman", serif;
+    --monospace-font:
+        "Atkinson Hyperlegible Mono", "Courier New", Courier, monospace;
+
+    --loop-width: 25;
+    --loop-height: 25;
+    --loop-min-gap: 6;
+    --loop-near-scale-floor: 0.6;
+
+    --spacing-small: 0.625rem;
+    --spacing-medium: 1.25rem;
+    --spacing-large: 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #fff;
+        --secondary-color: #c8c8c8;
+        --background-color: #111;
+        --background-color-muted: #333;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-height);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: var(--primary-color);
+    background: var(--background-color);
+}
+
+code {
+    padding: 0.1rem 0.35rem;
+    font-family: var(--monospace-font);
+    font-size: 0.95rem;
+    line-height: 1.25;
+}
+
+pre code,
+.highlight pre code {
+    overflow-x: auto;
+    display: block;
+    border: 1px solid var(--secondary-color);
+    border-left: 3px solid var(--secondary-color);
+    padding: var(--spacing-medium);
+    tab-size: 4;
+}
+
+pre,
+.highlight pre {
+    position: relative;
+}
+
+.copy-code-button {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.35rem;
+    font-size: 1rem;
+    font-family: var(--monospace-font);
+    background: transparent;
+    border: none;
+    color: var(--secondary-color);
+    cursor: pointer;
+    opacity: 0;
+    transition:
+        opacity 0.12s ease,
+        color 0.12s ease;
+    user-select: none;
+}
+
+pre:hover .copy-code-button {
+    opacity: 0.9;
+}
+
+.copy-code-button:hover {
+    color: var(--primary-color);
+}
+
+.copy-code-button.copied {
+    opacity: 1;
+    color: var(--link-color);
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    padding: var(--spacing-large) 0;
+}
+
+thead {
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+th,
+td {
+    padding: var(--spacing-small) var(--spacing-small);
+}
+
+caption {
+    padding-top: var(--spacing-small);
+    caption-side: bottom;
+    font-style: italic;
+    font-size: 0.9rem;
+    letter-spacing: 0.5pt;
+    color: var(--secondary-color);
+}
+
+.page {
+    display: grid;
+    grid-template-columns: var(--outline-width) 1fr;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    padding: var(--left-content-padding) var(--right-content-padding) 80px;
+}
+
+.full-bleed {
+    margin-right: calc(-1 * 42.85%);
+    padding-top: var(--spacing-large);
+    padding-bottom: var(--spacing-large);
+}
+
+article {
+    width: 100%;
+    max-width: var(--content-width);
+    font: 400 18px/1.6 var(--body-font);
+    counter-reset: sidenote-counter;
+    padding-right: 0;
+}
+
+.article-header {
+    width: 70%;
+    font-family: var(--header-font);
+}
+
+.article-title {
+    margin: 0;
+    line-height: 1.15;
+    font-size: clamp(2.2rem, 3.2vw + 1rem, 3.1rem);
+    letter-spacing: 0.3pt;
+    padding-top: var(--spacing-large);
+    padding-bottom: var(--spacing-medium);
+}
+
+.article-subtitle {
+    margin: 0;
+    line-height: 1.35;
+    font-size: clamp(1.1rem, 1.2vw + 0.6rem, 1.45rem);
+    color: var(--secondary-color);
+}
+
+.article-meta {
+    margin: 0;
+    font-family: var(--monospace-font);
+    font-size: 0.95rem;
+    color: var(--secondary-color);
+}
+
+.article-inner {
+    width: 70%;
+}
+
+.article-inner h1,
+.article-inner h2,
+.article-inner h3 {
+    margin: 0;
+    font-family: var(--header-font);
+    line-height: 1.5;
+    padding: var(--spacing-medium) 0 0;
+    position: relative;
+}
+
+.article-inner h1::before,
+.article-inner h2::before,
+.article-inner h3::before {
+    content: "\00A7\2009";
+    position: absolute;
+    left: -1.5rem;
+}
+
+.article-inner h1 {
+    font-size: 2rem;
+}
+.article-inner h2 {
+    font-size: 1.8rem;
+}
+.article-inner h3 {
+    font-size: 1.6rem;
+}
+
+.article-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--background-color-muted);
+}
+
 ul,
 ol {
-    padding-left: 2em;
-    margin-bottom: var(--spacing-medium);
+    padding-left: var(--spacing-large);
+    padding-bottom: var(--spacing-medium);
 }
 
 ul {
     list-style-type: "\25C7";
 }
 
-ul li,
-ol li {
-    padding-left: 1em;
-}
-
-ol.quote,
-p.quote {
-    padding-left: 2em;
-    border-left: 0.15em solid var(--border-color);
+blockquote {
+    padding-left: var(--spacing-large);
+    border-left: 0.15rem solid var(--link-color);
+    margin: 0;
     font-style: italic;
 }
 
-/* Links */
-a {
-    text-decoration: none;
-}
-
-.main-content a {
+article a {
     color: var(--primary-color);
     text-decoration: underline;
     text-decoration-thickness: 0.1em;
@@ -46,264 +283,192 @@ a {
     transition: text-decoration-color 0.2s ease;
 }
 
-.main-content a.internal-link {
+article a.internal-link {
     text-decoration-color: var(--link-color);
 }
 
-.main-content a.external-link {
+article a.external-link {
     text-decoration-color: var(--external-link-color);
 }
 
-.main-content a:hover {
+article a:hover {
     text-decoration-color: var(--secondary-color);
 }
 
-/* Navigation */
+header {
+    border-bottom: 1px solid var(--secondary-color);
+    height: var(--header-height);
+    position: fixed;
+    width: 100%;
+    background: var(--background-color);
+    z-index: 1000;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    margin: calc(var(--header-height) - var(--spacing-large)) auto;
+    max-width: 1200px;
+    font-size: 1.5rem;
+}
+
+nav ul li a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
 nav ul li a:hover {
     color: var(--secondary-color);
     transform: scale(1.2);
 }
 
-/* Sidebar */
-#sidebar {
-    width: 25rem;
-    padding-left: var(--spacing-medium);
-    position: absolute;
-    right: var(--spacing-medium);
-    top: var(--spacing-medium);
+.outline {
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    display: grid;
+    grid-template-columns:
+        calc(var(--thread-left-space) + var(--thread-right-space))
+        1fr;
+    overflow: hidden;
+    padding: 1rem 0;
 }
 
-#sidebar ul {
-    list-style-type: none;
-    text-align: right;
-    border-right: 0.1em solid var(--border-color);
-    padding-right: var(--spacing-medium);
-}
-
-#sidebar li {
-    margin-bottom: var(--spacing-small);
-}
-
-#sidebar a {
-    color: var(--link-color);
-    transition: transform 0.2s ease;
-    display: inline-block;
-}
-
-#sidebar a:hover {
-    transform: scale(1.1);
-}
-
-/* Table of Contents */
-
-.toc-wrapper {
-    width: 20rem;
-    padding-right: 1.25rem;
-    position: fixed;
-    top: 5rem;
-    left: 1rem;
-    border-left: 0.1em solid var(--border-color);
-    overflow-y: auto;
-}
-
-.toc li {
+.outline__thread-wrap,
+.outline__labels {
     position: relative;
-    margin-bottom: 0.5rem;
-    list-style-type: none;
 }
 
-.toc a {
-    display: inline-block;
+.outline__thread-svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+}
+
+.outline__item {
+    text-decoration: none;
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    max-width: var(--outline-text-space);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--header-font);
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+.outline__item::before {
+    content: "\00A7\2009";
+    font-size: 1.2rem;
     color: var(--secondary-color);
-    transition: all 0.2s ease;
 }
 
-.toc a:hover {
-    transform: scale(1.1);
-}
-
-.toc a::before {
-    content: "\276F"; /* Unicode right-pointing triangle */
-    position: absolute;
-    opacity: 0;
-    margin-left: -1rem;
-    transition: opacity 0.2s ease;
-}
-
-.toc a.active {
-    color: var(--primary-color);
-}
-
-.toc a.active::before {
-    opacity: 1;
-}
-
-/* SVG */
-
-.scalable-stroke {
-    vector-effect: non-scaling-stroke;
-}
-
-.auto-chart svg {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Horizontal Rule */
-
-hr {
-    border: none;
-    border-top: 0.12em solid var(--border-color);
-    border-bottom: 0.12em solid var(--border-color);
-    height: 0.32em;
-    padding: 0;
-}
-
-section {
-    margin-bottom: 2rem;
-}
-
-footer {
-    text-align: center;
-    margin-top: 2rem;
-    padding: 1rem;
-    background-color: var(--background-color);
-    border-top: 0.12em solid var(--border-color);
-}
-
-/* Hoverable Footnotes */
-.footnote {
-    cursor: pointer;
-    position: relative;
-    display: inline;
-    background-color: transparent;
-}
-
-.footnote::after {
-    content: "†";
-    font-size: 0.8em;
-    vertical-align: super;
-    margin-left: 0.2em;
+.outline__item:hover::before {
     color: var(--link-color);
 }
 
-.footnote:hover {
-    background-color: var(--border-color);
+#threadBase {
+    stroke: var(--secondary-color);
+    stroke-width: 1;
+    stroke-linecap: round;
 }
 
-.footnote-popup {
-    background-color: var(--off-background-color);
-    border: 0.08em solid var(--border-color);
-    padding: 0.625rem 1rem;
-    box-shadow: 0 0.15em 0.2em rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    box-sizing: border-box;
-    border-radius: 0.25em;
-    border-left: 0.2em solid var(--link-color);
-    overflow-y: auto;
+#threadProgress {
+    stroke: var(--primary-color);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 0 var(--top, 0) var(--seg, 0)
+        calc(1 - (var(--top, 0) + var(--seg, 0)));
+    pointer-events: none;
+}
+
+.sidenote,
+.marginnote {
+    float: right;
+    clear: right;
+    width: 35%;
+    margin-right: -42.85%;
+    margin-top: 0.2rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--secondary-color);
+    border-top: 1px solid var(--secondary-color);
+    padding-top: 0;
+    position: relative;
+}
+
+.sidenote-number {
+    counter-increment: sidenote-counter;
+}
+
+.sidenote-number:after {
+    content: counter(sidenote-counter);
+    font-size: 0.7rem;
+    position: relative;
+    top: -0.5rem;
+    left: -0.2rem;
+}
+
+.sidenote:before {
+    content: counter(sidenote-counter);
     position: absolute;
-    transition:
-        opacity 0.3s ease,
-        visibility 0.3s ease;
-    opacity: 0;
-    visibility: hidden;
-    margin-top: 5px;
-    font-size: 0.95em;
-    line-height: 1.5;
+    top: -0.5rem;
+    right: 100%;
+    padding-right: 0.35rem;
+    width: 3ch;
+    text-align: right;
+    font-size: 0.7rem;
+    line-height: 1;
+    color: var(--secondary-color);
 }
 
-/* Position footnote popup to the right ONLY on very large screens */
-@media screen and (min-width: 90.24rem) {
-    .footnote-popup {
-        width: 20rem !important; /* Override inline styles */
-        position: absolute !important; /* Allow popup to move with scroll */
-        margin: 0;
-        left: calc(
-            100% + 1rem
-        ) !important; /* Position to the right of main content */
-        right: auto !important; /* Ensure it doesn't use right positioning */
-        /* top will be set via JavaScript to align with the clicked footnote */
-    }
-}
-
-.footnote-popup.visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-.close-btn {
-    position: absolute;
-    top: 0.3rem;
-    right: 0.3rem;
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    color: var(--primary-color);
-}
-
-/* Visibility Control */
-.hidden {
+input.margin-toggle {
     display: none;
 }
 
-.visible {
-    display: block;
+label.margin-toggle:not(.sidenote-number) {
+    display: none;
 }
 
-/* Scroll progress bar */
-.scroll-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 0.5rem;
-    background-color: transparent;
-    z-index: 1000;
-}
-
-.scroll-progress-bar {
-    height: 100%;
-    background-color: var(--scroll-progress-color);
-    width: 0;
-    transition: width 0.1s ease-out;
-}
-
-/* Basic responsive design */
-@media screen and (max-width: 1444px) {
-    #sidebar {
-        position: static;
-        width: 100%;
-        margin-bottom: 1.25rem;
-    }
-    #sidebar ul {
-        text-align: left;
-        border-right: none;
-        border-top: 0.1em solid var(--border-color);
-        padding-right: 0;
-        padding-top: 1rem;
+@media (max-width: 920px) {
+    .page {
+        grid-template-columns: 1fr;
     }
 
-    nav ul li {
-        margin-bottom: 0.625rem;
-    }
-
-    nav ul li a {
-        color: var(--link-color);
-    }
-}
-
-@media (max-width: 90.25rem) {
-    .toc-wrapper {
+    .outline {
         display: none;
     }
 
-    /* Ensure footnote popup behavior on medium and small screens */
-    .footnote-popup {
-        position: absolute !important;
-        width: auto !important; /* Will be set by JS */
-        left: auto !important;
-        right: auto !important;
-        margin-top: 5px;
+    article {
+        padding-right: 0;
+    }
+
+    .full-bleed {
+        width: calc(100vw - 56px);
+    }
+
+    .sidenote,
+    .marginnote {
+        display: none;
+    }
+
+    .margin-toggle:checked + .sidenote,
+    .margin-toggle:checked + .marginnote {
+        display: block;
+        float: none;
+        width: 95%;
+    }
+
+    label.sidenote-number,
+    label.margin-toggle:not(.sidenote-number) {
+        display: inline;
+        cursor: pointer;
+    }
+
+    label.margin-toggle:not(.sidenote-number)::after {
+        content: "†";
     }
 }

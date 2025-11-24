@@ -1,13 +1,9 @@
 name: Academia-Theme
 version: 1.0.0
 
-markdown: kramdown
-kramdown:
-  math_engine: mathjax
-
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
+navigation:
+  - title: Home
+    url: /
 
 defaults:
   - scope:
@@ -15,24 +11,17 @@ defaults:
     values:
       layout: default
 
-theme_settings:
-  navigation:
-    - title: Home
-      url: /
+outline_thread: true
 
 title: Site Title
-description: Site description
-footer_content: "Made by Zachariah Schwab"
+description: Site Description
+author: "Your name here"
 
-# Exclude development-specific files
 exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
-  - vendor/bundle/
-  - vendor/cache/
-  - vendor/gems/
-  - vendor/ruby/
+  - vendor/
   - .gitignore
   - LICENSE
   - README.md

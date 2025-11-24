@@ -1,7 +1,7 @@
 <header>
   <nav>
     <ul>
-      {% for item in site.theme_settings.navigation %}
+      {% for item in site.navigation %}
       <li>
         <a href="{{ item.url | relative_url }}" class="internal-link">
           {{ item.title }}
