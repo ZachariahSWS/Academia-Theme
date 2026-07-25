@@ -15,7 +15,7 @@
           <div class="article_body">
 {{ resource.content | indent(prefix="            ", first=true) | safe }}
 
-{% if resource.pages is defined and resource.pages %}            <ol class="article_list">
+{% if resource.pages is defined and resource.pages and resource.extra.list_pages | default(value=true) %}            <ol class="article_list">
 {% for child in resource.pages %}              <li>
                 <a class="internal_link" href="{{ child.permalink }}">{{ child.title }}</a>
 {% if child.date %}                <time datetime="{{ child.date }}">{{ child.date | date(format="%B %-d, %Y") }}</time>

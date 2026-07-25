@@ -10,6 +10,71 @@ const contentDirectory = resolve(outputDirectory, "..", "content");
 const mathSourcePattern = /<(span|div) class="math_source" data-math_source="([A-Za-z0-9+/=]+)" data-math_is_display="(true|false)">[\s\S]*?<\/\1>/g;
 const temmlStylesheetPattern = /^[ \t]*<!-- temml_stylesheet:([^\s]+) -->[ \t]*\r?\n?/m;
 const markdownSourcePattern = /<meta name="markdown-source" content="([^"]+)">/;
+const excludedElementPattern = /<(pre|code|script|style)\b[\s\S]*?<\/\1\s*>/gi;
+const htmlTagPattern = /(?:<!--[\s\S]*?-->|<![^>]*>|<[^>]*>)/g;
+const mathDelimiterPattern = /\\\(([\s\S]*?)\\\)|\$\$([\s\S]*?)\$\$/g;
+
+function decodeHtmlEntities(value) {
+  return value
+    .replace(/&#(\d+);/g, (_entity, codePoint) =>
+      String.fromCodePoint(Number(codePoint)))
+    .replace(/&#x([0-9a-f]+);/gi, (_entity, codePoint) =>
+      String.fromCodePoint(Number.parseInt(codePoint, 16)))
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&amp;/g, "&");
+}
+
+function renderEquation(tex, displayMode, element = "span") {
+  const encodedTex = Buffer.from(tex).toString("base64");
+  const mathml = temml.renderToString(tex, { displayMode, throwOnError: true });
+  const wrapper = displayMode ? "div" : element;
+  const mode = displayMode ? "display" : "inline";
+  const wrapperAttributes = displayMode
+    ? ""
+    : ` data-math_source="${encodedTex}" role="button" tabindex="0" aria-label="Copy LaTeX"`;
+  const copyButton = displayMode
+    ? `<button class="copy_button copy_math_button" type="button" data-math_source="${encodedTex}" aria-label="Copy LaTeX" title="Copy LaTeX"><svg aria-hidden="true"><use href="#copy_icon_symbol"></use></svg></button>`
+    : "";
+  return `<${wrapper} class="rendered_math rendered_math_${mode}"${wrapperAttributes}>${mathml}${copyButton}</${wrapper}>`;
+}
+
+function renderDelimitedMath(html, onEquation) {
+  const renderMatch = (_source, inlineTex, displayTex) => {
+    const displayMode = displayTex !== undefined;
+    const tex = decodeHtmlEntities(displayMode ? displayTex : inlineTex);
+    onEquation();
+    return renderEquation(tex, displayMode);
+  };
+  const renderText = (text) => text.replace(mathDelimiterPattern, renderMatch);
+  const renderTextNodes = (source) => {
+    const fragment = source.replace(
+      /<p>\s*\$\$([\s\S]*?)\$\$\s*<\/p>/g,
+      (match, displayTex) => renderMatch(match, undefined, displayTex),
+    );
+    let output = "";
+    let lastIndex = 0;
+
+    for (const match of fragment.matchAll(htmlTagPattern)) {
+      output += renderText(fragment.slice(lastIndex, match.index));
+      output += match[0];
+      lastIndex = match.index + match[0].length;
+    }
+
+    return output + renderText(fragment.slice(lastIndex));
+  };
+
+  let output = "";
+  let lastIndex = 0;
+  for (const match of html.matchAll(excludedElementPattern)) {
+    output += renderTextNodes(html.slice(lastIndex, match.index));
+    output += match[0];
+    lastIndex = match.index + match[0].length;
+  }
+  return output + renderTextNodes(html.slice(lastIndex));
+}
 
 async function htmlFiles(directory) {
   const entries = await readdir(directory);
@@ -51,22 +116,17 @@ for (const path of await htmlFiles(outputDirectory)) {
     markdownCount += 1;
   }
 
-  let rendered = html.replace(
+  let rendered = renderDelimitedMath(html, () => {
+    equationsInFile += 1;
+  });
+
+  rendered = rendered.replace(
     mathSourcePattern,
     (_source, element, encodedTex, display) => {
       const tex = Buffer.from(encodedTex, "base64").toString("utf8");
       const displayMode = display === "true";
-      const mathml = temml.renderToString(tex, { displayMode, throwOnError: true });
-      const wrapper = displayMode ? "div" : element;
-      const mode = displayMode ? "display" : "inline";
-      const wrapperAttributes = displayMode
-        ? ""
-        : ` data-math_source="${encodedTex}" role="button" tabindex="0" aria-label="Copy LaTeX"`;
-      const copyButton = displayMode
-        ? `<button class="copy_button copy_math_button" type="button" data-math_source="${encodedTex}" aria-label="Copy LaTeX" title="Copy LaTeX"><svg aria-hidden="true"><use href="#copy_icon_symbol"></use></svg></button>`
-        : "";
       equationsInFile += 1;
-      return `<${wrapper} class="rendered_math rendered_math_${mode}"${wrapperAttributes}>${mathml}${copyButton}</${wrapper}>`;
+      return renderEquation(tex, displayMode, element);
     },
   );
 
