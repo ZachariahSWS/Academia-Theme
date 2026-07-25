@@ -1,0 +1,10 @@
+<header>
+  <nav aria-label="Main navigation">
+    <ul>
+{% for item in config.extra.academia_menu %}      <li>
+{% if item.external | default(value=false) %}        <a href="{{ item.url }}">{{ item.name }}</a>
+{% else %}        <a href="{{ get_url(path=item.url) }}" class="internal_link">{{ item.name }}</a>
+{% endif %}      </li>
+{% endfor %}    </ul>
+  </nav>
+</header>

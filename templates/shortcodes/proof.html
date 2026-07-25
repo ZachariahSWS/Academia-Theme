@@ -1,0 +1,6 @@
+<details class="proof"{% if open | default(value=false) %} open{% endif %}>
+  <summary>{{ title | default(value="Proof") }}</summary>
+  <div class="proof_body">
+{{ body | markdown | indent(prefix="    ", first=true) | safe }}
+  </div>
+</details>

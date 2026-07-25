@@ -1,0 +1,6 @@
+{%- set encoded_tex = body | trim | base64_encode -%}
+{%- if display %}
+<div class="math_source" data-math_source="{{ encoded_tex }}" data-math_is_display="true"><code>{{ body | trim }}</code></div>
+{% else -%}
+<span class="math_source" data-math_source="{{ encoded_tex }}" data-math_is_display="false"><code>{{ body | trim }}</code></span>
+{%- endif -%}

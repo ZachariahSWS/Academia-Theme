@@ -1,0 +1,19 @@
+name = "academia"
+description = "A typography-first Zola theme for essays, research notes, and long-form writing"
+license = "MIT"
+homepage = "https://github.com/ZachariahSWS/Academia-Theme"
+min_version = "0.22.0"
+demo = ""
+tags = ["academic", "blog", "minimal", "responsive", "typography"]
+
+[author]
+name = "Zachariah Schwab"
+homepage = "https://github.com/ZachariahSWS"
+
+[extra]
+academia_author = "Your name here"
+academia_outline_thread = true
+academia_favicon = ""
+academia_menu = [
+    { name = "Home", url = "/" },
+]

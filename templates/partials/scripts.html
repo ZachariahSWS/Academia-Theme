@@ -1,0 +1,5 @@
+{% set outline_thread = config.extra.academia_outline_thread | default(value=true) %}{% if resource.extra.outline_thread is defined %}{% set_global outline_thread = resource.extra.outline_thread %}{% endif %}{% if outline_thread %}<script src="{{ get_url(path='assets/js/article_outline.js', cachebust=true) }}" defer></script>
+{% endif %}{% if resource.extra.linechart | default(value=false) %}<script>
+  import("{{ get_url(path='assets/js/line_chart_interactions.js', cachebust=true) }}");
+</script>
+{% endif %}

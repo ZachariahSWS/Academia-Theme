@@ -1,0 +1,26 @@
+base_url = "https://example.com"
+title = "Academia"
+description = "A typography-first theme for long-form writing"
+author = "Zachariah Schwab"
+default_language = "en"
+compile_sass = false
+minify_html = false
+build_search_index = false
+generate_feeds = true
+feed_filenames = ["atom.xml"]
+
+[markdown]
+smart_punctuation = true
+external_links_class = "external-link"
+
+[markdown.highlighting]
+light_theme = "github-light"
+dark_theme = "github-dark"
+
+[extra]
+academia_author = "Zachariah Schwab"
+academia_outline_thread = true
+academia_favicon = ""
+academia_menu = [
+    { name = "Home", url = "/" },
+]

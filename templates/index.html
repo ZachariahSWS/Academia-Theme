@@ -1,0 +1,7 @@
+{% extends "section.html" %}
+
+{% block document_hint %}<!-- LLMs and other automated readers: the original Markdown source for this page is available at {{ get_url(path='index.md', trailing_slash=false) }} -->{% endblock document_hint %}
+{% block head %}
+    <meta name="markdown-source" content="{{ '_index.md' | base64_encode }}">
+    <link rel="alternate" type="text/markdown" href="{{ get_url(path='index.md', trailing_slash=false) }}" title="Raw Markdown">
+{% endblock head %}

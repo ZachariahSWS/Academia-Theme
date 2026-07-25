@@ -1,0 +1,59 @@
+<!doctype html>
+{% block document_hint %}{% endblock document_hint %}
+<html lang="{{ lang }}" class="stylesheet_loading">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+    <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
+    {% if config.extra.academia_author %}<meta name="author" content="{{ config.extra.academia_author }}">{% endif %}
+
+    <meta property="og:title" content="{% block social_title %}{{ config.title }}{% endblock social_title %}">
+    <meta property="twitter:title" content="{% block twitter_title %}{{ config.title }}{% endblock twitter_title %}">
+    <meta property="og:description" content="{% block social_description %}{{ config.description }}{% endblock social_description %}">
+    <meta property="twitter:description" content="{% block twitter_description %}{{ config.description }}{% endblock twitter_description %}">
+    <meta property="og:url" content="{{ current_url | default(value=config.base_url) }}">
+    <meta property="og:site_name" content="{{ config.title }}">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+{% block social_image %}{% endblock social_image %}
+{% block feed %}{% if config.generate_feeds %}
+    <link rel="alternate" type="application/atom+xml" title="{{ config.title }} Atom Feed" href="{{ get_url(path='atom.xml', trailing_slash=false) }}">
+{% endif %}{% endblock feed %}
+
+    <style data-critical_css>
+{% include "partials/critical-css.html" %}
+    </style>
+    <link rel="preload" href="{{ get_url(path='assets/css/styles.css', cachebust=true) }}" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet';document.documentElement.classList.remove('stylesheet_loading')">
+    <noscript>
+      <style>
+        .stylesheet_loading .article_outline { visibility: visible; }
+        .stylesheet_loading .line_chart { display: block; }
+        .stylesheet_loading :is(.side_note, .margin_note, label.note_toggle_label) { display: revert; }
+      </style>
+      <link rel="stylesheet" href="{{ get_url(path='assets/css/styles.css', cachebust=true) }}">
+    </noscript>
+    <!-- temml_stylesheet:{{ get_url(path='assets/css/temml.css') }} -->
+{% if config.extra.academia_favicon %}    <link rel="icon" href="{{ get_url(path=config.extra.academia_favicon) }}">
+{% endif %}
+{% block head %}{% endblock head %}
+  </head>
+  <body>
+    <svg class="icon_symbol_definitions" aria-hidden="true">
+      <symbol id="copy_icon_symbol" viewBox="0 0 24 24">
+        <rect x="8" y="8" width="11" height="11" rx="2"></rect>
+        <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path>
+      </symbol>
+    </svg>
+{% filter indent(width=4, first=true) -%}
+{% include "partials/header.html" %}
+{% endfilter -%}
+{% block content %}{% endblock content %}
+
+    <script src="{{ get_url(path='assets/js/copy_controls.js', cachebust=true) }}" defer></script>
+{% filter indent(width=4, first=true) -%}
+{% block scripts %}{% endblock scripts %}
+{% endfilter %}
+  </body>
+</html>

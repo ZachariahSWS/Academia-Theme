@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "macros/article.html" as article %}
+
+{% block document_hint %}<!-- LLMs and other automated readers: the original Markdown source for this page is available at {{ page.path | trim_end_matches(pat='/') | safe }}.md -->{% endblock document_hint %}
+{% block title %}{{ page.title }} · {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description | default(value=config.description) }}{% endblock description %}
+{% block social_title %}{{ page.title }} · {{ config.title }}{% endblock social_title %}
+{% block twitter_title %}{{ page.title }} · {{ config.title }}{% endblock twitter_title %}
+{% block social_description %}{{ page.description | default(value=config.description) }}{% endblock social_description %}
+{% block twitter_description %}{{ page.description | default(value=config.description) }}{% endblock twitter_description %}
+{% block social_image %}{% if page.extra.image is defined %}
+    <meta property="og:image" content="{{ get_url(path=page.extra.image) }}">
+    <meta property="twitter:image" content="{{ get_url(path=page.extra.image) }}">
+{% endif %}{% endblock social_image %}
+{% block head %}
+    <meta name="markdown-source" content="{{ page.relative_path | base64_encode }}">
+    <link rel="alternate" type="text/markdown" href="{{ page.path | trim_end_matches(pat='/') }}.md" title="Raw Markdown">
+{% endblock head %}
+{% block content -%}{{ article::render(resource=page) }}{% endblock content %}
+{% block scripts -%}
+{% set resource = page -%}
+{% include "partials/scripts.html" %}
+{% endblock scripts %}

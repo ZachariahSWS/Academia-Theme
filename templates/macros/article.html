@@ -1,0 +1,29 @@
+{% macro render(resource) %}{% set show_outline = config.extra.academia_outline_thread | default(value=true) %}{% if resource.extra.outline_thread is defined %}{% set_global show_outline = resource.extra.outline_thread %}{% endif %}
+    <div class="article_layout{% if not show_outline %} article_layout_without_outline{% endif %}">
+{% if show_outline %}{% include "partials/outline.html" %}{% endif %}
+
+      <main class="main_content" id="main_content">
+        <article id="article">
+          <div class="article_header">
+{% if resource.title %}            <h1 class="article_title">{{ resource.title }}</h1>
+{% endif %}{% if resource.extra.subtitle is defined %}            <p class="article_subtitle">{{ resource.extra.subtitle }}</p>
+{% endif %}{% if resource.date %}            <p class="article_metadata">
+              <time datetime="{{ resource.date }}">{{ resource.date | date(format="%B %-d, %Y") }}</time>
+            </p>
+{% endif %}          </div>
+
+          <div class="article_body">
+{{ resource.content | indent(prefix="            ", first=true) | safe }}
+
+{% if resource.pages is defined and resource.pages %}            <ol class="article_list">
+{% for child in resource.pages %}              <li>
+                <a class="internal_link" href="{{ child.permalink }}">{{ child.title }}</a>
+{% if child.date %}                <time datetime="{{ child.date }}">{{ child.date | date(format="%B %-d, %Y") }}</time>
+{% endif %}{% if child.description %}                <p>{{ child.description }}</p>
+{% endif %}              </li>
+{% endfor %}            </ol>
+{% endif %}          </div>
+        </article>
+      </main>
+    </div>
+{% endmacro render %}

@@ -1,0 +1,18 @@
+{
+  "name": "academia-zola-theme",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.13.0"
+  },
+  "scripts": {
+    "build": "zola build && node scripts/postprocess.mjs",
+    "postprocess": "node scripts/postprocess.mjs",
+    "render:charts": "node scripts/render-charts.mjs",
+    "render:footnotes": "node scripts/render-footnotes.mjs",
+    "render:math": "node scripts/render-math.mjs"
+  },
+  "devDependencies": {
+    "temml": "^0.13.0"
+  }
+}
