@@ -1,0 +1,53 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+    inputs:
+      site-directory:
+        description: Path to the Zola site in the calling repository
+        required: false
+        type: string
+        default: "."
+      theme-directory:
+        description: Path to Academia in the calling repository
+        required: false
+        type: string
+        default: "."
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SITE_DIRECTORY: ${{ inputs.site-directory || '.' }}
+      THEME_DIRECTORY: ${{ inputs.theme-directory || '.' }}
+    steps:
+      - name: Check out site and themes
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Install Zola
+        uses: taiki-e/install-action@v2
+        with:
+          tool: zola@0.22.1
+          fallback: none
+
+      - name: Install Academia dependencies
+        run: npm ci --prefix "$THEME_DIRECTORY"
+
+      - name: Build and postprocess site
+        run: |
+          zola --root "$SITE_DIRECTORY" build
+          npm --prefix "$THEME_DIRECTORY" run postprocess -- \
+            "$GITHUB_WORKSPACE/$SITE_DIRECTORY/public"

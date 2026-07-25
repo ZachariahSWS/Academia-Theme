@@ -1,12 +1,12 @@
-+++
-title = "Academia"
-description = "A typography-first Zola theme for essays, research notes, and long-form writing."
-sort_by = "date"
+---
+title: "Academia"
+description: "A typography-first Zola theme for essays, research notes, and long-form writing."
+sort_by: "date"
 
-[extra]
-subtitle = "A clean Zola theme for careful, long-form writing"
-linechart = true
-+++
+extra:
+  subtitle: "A clean Zola theme for careful, long-form writing"
+  linechart: true
+---
 
 Academia pairs book-like typography with a visual outline that follows the reader through an essay. Resize the page to see the layout collapse cleanly for smaller screens.
 
